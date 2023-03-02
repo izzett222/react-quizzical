@@ -7,20 +7,21 @@ export default function Quiz() {
   const correctlyAnswered = quiz.filter(
     (el) => el["correct_answer"] === el.chosenAnswer
   );
-
   useEffect(() => {
     fetch(
       "https://opentdb.com/api.php?amount=10&difficulty=medium&type=multiple"
     )
       .then((res) => res.json())
-      .then((data) => {
-        const newData = data.results.map((el) => ({
-          ...el,
-          chosenAnswer: null,
-        }));
-        setQuiz(newData);
-      });
+      .then(saveQuiz);
   }, []);
+  function saveQuiz(data) {
+    const newData = data.results.map((el) => ({
+      ...el,
+      chosenAnswer: null,
+      randomAnswers: [el["correct_answer"], ...el["incorrect_answers"]].sort(),
+    }));
+    setQuiz(newData);
+  }
   function checkAnswer() {
     setCheck(true);
   }
@@ -39,13 +40,7 @@ export default function Quiz() {
       "https://opentdb.com/api.php?amount=10&difficulty=medium&type=multiple"
     )
       .then((res) => res.json())
-      .then((data) => {
-        const newData = data.results.map((el) => ({
-          ...el,
-          chosenAnswer: null,
-        }));
-        setQuiz(newData);
-      });
+      .then(saveQuiz);
   }
   return (
     quiz.length && (
